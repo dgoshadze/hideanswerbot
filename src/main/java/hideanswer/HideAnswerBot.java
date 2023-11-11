@@ -1,5 +1,8 @@
 package hideanswer;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,8 +13,18 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 public class HideAnswerBot extends TelegramLongPollingBot {
 
+    private String greetingText = "";
+
     HideAnswerBot() {
         super("6563993858:AAHcRyYsTnH3xdLLY01kKL1SC5mpoohJ4u8");
+        try {
+            InputStream is = getClass().getClassLoader().getResourceAsStream("greeting.txt");
+            greetingText = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+            is.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            greetingText = "Some error occured during greeting phase, but you can try to proceed...";
+        }
     }
 
     @Override
@@ -29,9 +42,28 @@ public class HideAnswerBot extends TelegramLongPollingBot {
 
         try {
             var msg = update.getMessage();
+            if (msg == null)
+                return;
             var user = msg.getFrom();
 
+
             String requestText = msg.getText();
+
+            if ("/start".equals(requestText)) {
+
+                String reply = new StringBuilder("Привет, ")
+                .append(user.getFirstName())
+                .append("\n\n")
+                .append(greetingText)
+                .toString();
+
+                SendMessage replyMesssage = SendMessage.builder()
+                        .chatId(user.getId().toString())
+                        .text(reply)
+                        .build();
+                execute(replyMesssage);
+                return;
+            }
 
             RequestSplitter splitter = new RequestSplitter("Вопрос \\d*\\:", "Ответ\\:");
             List<QuestionAnswerPair> pairs = splitter.split(requestText);
