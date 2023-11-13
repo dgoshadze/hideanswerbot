@@ -15,8 +15,8 @@ public class HideAnswerBot extends TelegramLongPollingBot {
 
     private String greetingText = "";
 
-    HideAnswerBot() {
-        super("6563993858:AAHcRyYsTnH3xdLLY01kKL1SC5mpoohJ4u8");
+    HideAnswerBot(String botToken) {
+        super(botToken);
         try {
             InputStream is = getClass().getClassLoader().getResourceAsStream("greeting.txt");
             greetingText = new String(is.readAllBytes(), StandardCharsets.UTF_8);
