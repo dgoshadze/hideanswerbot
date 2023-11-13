@@ -13,6 +13,7 @@ public class App {
             System.out.println("Registering Bot");
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
             String botToken = System.getenv("HIDEANSWER_BOT_TOKEN");
+            System.out.println("Attmping to register bot with token = " + botToken);
             botsApi.registerBot(new HideAnswerBot(botToken));
             System.out.println("Successfully registered.");
         } catch (TelegramApiException e) {
